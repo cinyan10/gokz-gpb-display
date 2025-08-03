@@ -4,7 +4,6 @@
 #include <gokz/core>
 #include <gokz/localdb>
 #include <smjansson>
-// #include <colorlib>
 
 #define SP_VERSION "0.1"
 
