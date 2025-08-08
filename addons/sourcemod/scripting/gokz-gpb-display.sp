@@ -21,7 +21,7 @@ public Plugin myinfo =
 }
 
 public void
-	OnPluginStart()
+OnPluginStart()
 {
 	HookEvent("player_spawn", OnPlayerSpawn, EventHookMode_Post);
 	RegConsoleCmd("sm_pb", Command_ShowPB);
