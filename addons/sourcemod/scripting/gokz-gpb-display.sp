@@ -23,7 +23,6 @@ public Plugin myinfo =
 public void
 OnPluginStart()
 {
-	HookEvent("player_spawn", OnPlayerSpawn, EventHookMode_Post);
 	RegConsoleCmd("sm_pb", Command_ShowPB);
 	RegConsoleCmd("sm_gpb", Command_ShowPB);
 }
@@ -55,18 +54,6 @@ public void OnLibraryAdded(const char[] name)
 	}
 }
 
-static bool hasSpawned[MAXPLAYERS + 1];
-
-public void OnClientPutInServer(int client)
-{
-	OnClientPutInServer_FirstSpawn(client);
-}
-
-void OnClientPutInServer_FirstSpawn(int client)
-{
-	hasSpawned[client] = false;
-}
-
 public void GOKZ_OnOptionChanged(int client, const char[] option, any newValue)
 {
 	if (StrEqual(option, gC_CoreOptionNames[Option_Mode]))
@@ -76,28 +63,21 @@ public void GOKZ_OnOptionChanged(int client, const char[] option, any newValue)
 	}
 }
 
-public void OnPlayerSpawn(Event event, const char[] name, bool dontBroadcast)  // player_spawn post hook
+public void GOKZ_OnFirstSpawn(int client)  // player_spawn post hook
 {
-	int client = GetClientOfUserId(event.GetInt("userid"));
 	if (IsValidClient(client))
 	{
-		int team = GetClientTeam(client);
-		if (!hasSpawned[client] && (team == CS_TEAM_CT || team == CS_TEAM_T))
+		int mode           = 2;  // Default to KZTimer
+		if (g_UsesGokz)
 		{
-			hasSpawned[client] = true;
-
-			int mode           = 2;  // Default to KZTimer
-			if (g_UsesGokz)
-			{
-				mode = GOKZ_GetCoreOption(client, Option_Mode);
-			}
-
-			if (mode >= sizeof(gC_APIModes))
-			{
-				return;
-			}
-			RequestRecords(client, mode);
+			mode = GOKZ_GetCoreOption(client, Option_Mode);
 		}
+
+		if (mode >= sizeof(gC_APIModes))
+		{
+			return;
+		}
+		RequestRecords(client, mode);
 	}
 }
 
